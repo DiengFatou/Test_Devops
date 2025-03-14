@@ -54,9 +54,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: b5989093548eb668cb8b61b737fb3bc48e0bb7ad
-        with:
-          sonar.projectKey=diengfatou/Test_Devops
-          sonar.organization=DiengFatou
+      with:
+            sonar.projectKey: diengfatou
+            sonar.organization: DiengFatou
+
+          
 
   build-and-deploy:
     needs: [deploy-production, sonarcloud-analysis]
