@@ -1,5 +1,5 @@
-sonar.projectKey=Aziz-TheDarkCode_devops-laravel-ci-cd
-sonar.organization=aziz-thedarkcode
+sonar.projectKey=DiengFatou/Test_Devops
+sonar.organization=diengfatou
 
 sonar.sources=app,resources
 sonar.tests=tests
