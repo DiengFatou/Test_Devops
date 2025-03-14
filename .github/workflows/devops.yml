@@ -41,8 +41,9 @@ jobs:
       - name: 📝 Run frontend tests (or skip if not set up)
         run: npm test || echo "No frontend tests configured - skipping this step"
         continue-on-error: true
-    build-and-deploy:
-    needs: [deploy-production, sonarcloud-analysis]
+
+  build-and-deploy:
+    needs: [deploy-production]  # Attends d'abord les tests avant de déployer
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -141,8 +142,7 @@ jobs:
           chmod +x deploy/deploy.sh
 
       - name: 📦 Package Application
-        run: |
-            zip -r laravel-app-prod-${{ github.sha }}.zip .
+        run: zip -r laravel-app-prod-${{ github.sha }}.zip .
 
       - name: 📤 Upload artifact to GitHub Packages
         uses: actions/upload-artifact@v4
@@ -187,22 +187,20 @@ jobs:
             unzip -o laravel-app-prod-${{ github.sha }}.zip -d laravel-app
             cd laravel-app/deploy
             ./deploy.sh
-      
+
   sonarcloud-analysis:
+    needs: [build-and-deploy]  # SonarCloud s'exécute à la fin
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0  # Fetches all history for accurate reporting
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Récupérer tout l'historique pour une analyse plus précise
 
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: b5989093548eb668cb8b61b737fb3bc48e0bb7ad
-      with:
-            sonar.projectKey: diengfatou
-            sonar.organization: DiengFatou
-
-          
-
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: b5989093548eb668cb8b61b737fb3bc48e0bb7ad
+        with:
+          sonar.projectKey: diengfatou
+          sonar.organization: DiengFatou
