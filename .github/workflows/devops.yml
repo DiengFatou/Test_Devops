@@ -21,7 +21,11 @@ jobs:
       - name: Copy .env file
         run: cp .env.example .env
 
-      # Étape 3 : Installer les dépendances
+      # Étape 3 : Générer la clé de l'application
+      - name: Generate application key
+        run: php artisan key:generate
+
+      # Étape 4 : Installer les dépendances
       - name: Install dependencies
         run: |
           if [ -f "package.json" ]; then
@@ -34,7 +38,7 @@ jobs:
             composer install
           fi
 
-      # Étape 4 : Construire le projet
+      # Étape 5 : Construire le projet
       - name: Build project
         run: |
           if [ -f "gradlew" ]; then
@@ -44,7 +48,7 @@ jobs:
             make build
           fi
 
-      # Étape 5 : Exécuter les tests unitaires
+      # Étape 6 : Exécuter les tests unitaires
       - name: Run unit tests
         run: |
           if [ -f "gradlew" ]; then
@@ -57,7 +61,7 @@ jobs:
             ./vendor/bin/phpunit
           fi
 
-      # Étape 6 : Vérifier la qualité du code
+      # Étape 7 : Vérifier la qualité du code
       - name: Run static analysis (ESLint, PHPStan, SonarQube, etc.)
         run: |
           if [ -f "package.json" ]; then
@@ -70,7 +74,7 @@ jobs:
             sonar-scanner
           fi
 
-      # Étape 7 : Envoi d'un email en cas d'échec
+      # Étape 8 : Envoi d'un email en cas d'échec
       - name: Send failure email notification
         if: failure()
         run: |
