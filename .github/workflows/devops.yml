@@ -53,7 +53,7 @@ jobs:
       uses: SonarSource/sonarcloud-github-action@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_TOKEN: b5989093548eb668cb8b61b737fb3bc48e0bb7ad
         with:
           sonar.projectKey=diengfatou/Test_Devops
           sonar.organization=DiengFatou
