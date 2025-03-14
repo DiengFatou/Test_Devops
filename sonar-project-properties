@@ -1,8 +1,1 @@
-sonar.projectKey=diengfatou_Test_Devops
-sonar.organization=DiengFatou
 
-sonar.sources=app,resources
-sonar.tests=tests
-sonar.php.coverage.reportPaths=coverage.xml
-sonar.php.tests.reportPath=junit.xml
-sonar.exclusions=vendor/**,node_modules/**,public/**,storage/**
