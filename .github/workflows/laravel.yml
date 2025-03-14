@@ -1,0 +1,80 @@
+
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Récupérer le code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape 2 : Installer les dépendances
+      - name: Install dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm install
+          fi
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f "composer.json" ]; then
+            composer install
+          fi
+
+      # Étape 3 : Construire le projet
+      - name: Build project
+        run: |
+          if [ -f "gradlew" ]; then
+            ./gradlew build
+          fi
+          if [ -f "Makefile" ]; then
+            make build
+          fi
+
+      # Étape 4 : Exécuter les tests unitaires
+      - name: Run unit tests
+        run: |
+          if [ -f "gradlew" ]; then
+            ./gradlew test
+          fi
+          if [ -f "pytest.ini" ]; then
+            pytest --maxfail=5 --disable-warnings
+          fi
+          if [ -f "phpunit.xml" ]; then
+            ./vendor/bin/phpunit
+          fi
+
+      # Étape 5 : Vérifier la qualité du code
+      - name: Run static analysis (ESLint, PHPStan, SonarQube, etc.)
+        run: |
+          if [ -f "package.json" ]; then
+            npm run lint
+          fi
+          if [ -f "phpstan.neon" ]; then
+            ./vendor/bin/phpstan analyse
+          fi
+          if [ -f "sonar-project.properties" ]; then
+            sonar-scanner
+          fi
+
+      # Étape 6 : Envoi d'un email en cas d'échec
+      - name: Send failure email notification
+        if: failure()
+        run: |
+          curl --request POST \
+            --url 'https://api.mailgun.net/v3/${{ secrets.MAILGUN_DOMAIN }}/messages' \
+            --user "api:${{ secrets.MAILGUN_API_KEY }}" \
+            --form "from=${{ secrets.FROM_EMAIL }}" \
+            --form "to=${{ secrets.TO_EMAIL }}" \
+            --form "subject=CI Pipeline Failed" \
+            --form "text=Your CI pipeline failed. Please check the logs for more details."
