@@ -1,4 +1,4 @@
-sonar.projectKey=diengfatou
+sonar.projectKey=diengfatou_Test_Devops
 sonar.organization=DiengFatou
 
 sonar.sources=app,resources
